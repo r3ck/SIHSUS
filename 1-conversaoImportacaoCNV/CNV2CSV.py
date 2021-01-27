@@ -1,8 +1,19 @@
 import codecs
+import pandas as pd
+from tempfile import NamedTemporaryFile
 
-def CNV2CSV(fileName):
+
+def read_cnv(filename):
+    with NamedTemporaryFile(delete=False) as tf:
+        CNV2CSV(filename, tf.name)
+        df = pd.read_csv(tf.name+ '.csv', encoding='iso8859-1')
+    os.unlink(tf.name)
+    return df 
+
+
+def CNV2CSV(fileName, outFileName):
 	countLinha=1
-	nomeSaida=fileName.split('.')[0]+'.csv'
+	nomeSaida=outFileName+'.csv'
 	saida=open(nomeSaida,'w')
 	saida.write('valor,codigo\n')
 	with codecs.open(fileName,'r',encoding='iso8859-1') as f:
@@ -39,7 +50,6 @@ def remove_contagem(campo):
 
 def divide_duas_colunas(line):
 	'''final_codigo=len(line)
-
 	for i in range(59,len(line)):
 		if(not(line[i].isdigit() or line[i]==',' or line[i]=='-')):
 			final_codigo=i
